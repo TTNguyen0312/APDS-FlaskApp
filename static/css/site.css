@@ -1,0 +1,148 @@
+/* =========
+   Base
+========= */
+*{ box-sizing: border-box; }
+
+:root {
+  --max: 1100px;
+  --pad: 16px;
+  --text: #111;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --bg: #fff;
+}
+
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+}
+
+a { color: inherit; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Serif look for the brand lockup */
+header h1,
+footer h2 {
+  margin: 0;
+  font: 600 28px/1.2 Georgia, "Times New Roman", serif;
+  letter-spacing: 0.06em;
+}
+
+/* Container treatment for header rows & footer blocks */
+header > [role="banner"],
+header > nav,
+footer > div {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding-left: var(--pad);
+  padding-right: var(--pad);
+}
+
+/* =========
+   Header (top bar + primary nav)
+========= */
+
+/* Top bar: center brand; search pinned right */
+header [role="banner"] {
+  position: relative;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Search icon (Font Awesome) on the right */
+header [role="banner"] a:last-of-type {
+  position: absolute;
+  right: var(--pad);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px; /* icon size */
+  line-height: 1;
+}
+
+/* Primary nav row */
+header nav {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: #fff;
+}
+header nav ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  padding: 12px 0;
+  margin: 0;
+}
+header nav a {
+  font-weight: 600;
+  font-size: 14px;
+}
+@media (max-width: 640px) {
+  header nav ul {
+    flex-wrap: wrap;
+    row-gap: 8px;
+    gap: 20px;
+  }
+}
+
+/* =========
+   Footer
+========= */
+
+/* Brand title block */
+footer > div:first-child {
+  text-align: center;
+  padding: 32px var(--pad) 16px;
+}
+
+/* Link columns */
+footer > div:nth-child(2) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  padding: 0 var(--pad) 24px;
+}
+@media (min-width: 768px) {
+  footer > div:nth-child(2) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+footer nav h3 {
+  margin: 0 0 8px;
+  font-weight: 700;
+  font-size: 16px;
+}
+footer nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+footer nav li + li { margin-top: 8px; }
+
+/* Bottom bar */
+footer > div:last-child {
+  border-top: 1px solid var(--border);
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 12px var(--pad);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+}
+footer > div:last-child a { color: var(--text); }
+footer > div:last-child i { font-size: 16px; margin-left: 10px; }
+
+/* Optional content width for landing page hero/sections */
+main#content {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding-left: var(--pad);
+  padding-right: var(--pad);
+}
