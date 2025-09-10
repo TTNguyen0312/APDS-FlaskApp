@@ -14,7 +14,7 @@
     <!-- Your site styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/cite.css') }}">
+    {% block head_extra %}{% endblock %}
 </head>
 
 <body>

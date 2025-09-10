@@ -35,8 +35,7 @@ footer h2 {
 header > [role="banner"],
 header > nav,
 footer > div {
-  max-width: var(--max);
-  margin: 0 auto;
+  padding: 0 8%;
   padding-left: var(--pad);
   padding-right: var(--pad);
 }
@@ -47,6 +46,7 @@ footer > div {
 
 /* Top bar: center brand; search pinned right */
 header [role="banner"] {
+  cursor: pointer;
   position: relative;
   height: 64px;
   display: flex;
@@ -57,7 +57,7 @@ header [role="banner"] {
 /* Search icon (Font Awesome) on the right */
 header [role="banner"] a:last-of-type {
   position: absolute;
-  right: var(--pad);
+  margin: 0 0 0 80%;
   top: 50%;
   transform: translateY(-50%);
   font-size: 18px; /* icon size */
@@ -74,7 +74,7 @@ header nav ul {
   list-style: none;
   display: flex;
   justify-content: center;
-  gap: 32px;
+  gap: 120px;
   padding: 12px 0;
   margin: 0;
 }
@@ -102,10 +102,10 @@ footer > div:first-child {
 
 /* Link columns */
 footer > div:nth-child(2) {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  justify-content: space-between;
   gap: 24px;
-  padding: 0 var(--pad) 24px;
+  padding: 0 8%;
 }
 @media (min-width: 768px) {
   footer > div:nth-child(2) {
@@ -139,10 +139,3 @@ footer > div:last-child {
 footer > div:last-child a { color: var(--text); }
 footer > div:last-child i { font-size: 16px; margin-left: 10px; }
 
-/* Optional content width for landing page hero/sections */
-main#content {
-  max-width: var(--max);
-  margin: 0 auto;
-  padding-left: var(--pad);
-  padding-right: var(--pad);
-}
