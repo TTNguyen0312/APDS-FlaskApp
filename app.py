@@ -10,7 +10,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-
 class Clothes(db.Model):
     ClothingID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ClothTitle = db.Column(db.String, nullable=False)
@@ -30,12 +29,63 @@ class Clothes(db.Model):
             'DivisionName': self.DivisionName,
             'PositiveFeedbackCount': self.PositiveFeedbackCount
         }
+        
+        
+class Reviews(db.Model):
+    ReviewID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    ClothingID = db.Column(db.Integer, db.ForeignKey('clothes.ClothingID'), nullable=False)
+    Title = db.Column(db.String, nullable=False)
+    # Text = db.Column(db.Text, nullable=False)
+    Rating = db.Column(db.Integer, nullable=False)
+    # Recommend = db.Column(db.Integer, nullable=False)  # 0 or 1
 
-@app.route('/')
+    def json(self):
+        return {
+            "ReviewID": self.ReviewID,
+            "ClothingID": self.ClothingID,
+            "Title": self.Title,
+            "Description": self.Description,
+            "Rating": self.Rating,
+            "Recommend": self.Recommend
+        }
+
+
+
+@app.route('/clothes')
 def index():
     clothes = Clothes.query.all()
     clothes = [cloth.json() for cloth in clothes]
     return clothes
+
+@app.route('/reviews')
+def get_reviews():
+    reviews = Reviews.query.all()
+    reviews = [review.json() for review in reviews]
+    return reviews
+
+@app.route('/clothes/<int:clothId>', methods=['GET'])
+def get_cloth_by_id(clothId):
+    cloth = Clothes.query.filter_by(ClothingID=clothId).first()
+    if not cloth:
+        return jsonify({"items": []}), 404   # return empty list if not found
+
+    return jsonify({
+        "items": [cloth.json()]   # wrap inside `items` list
+    })
+    
+
+@app.route('/reviews/<int:reviewId>', methods=['GET'])
+def get_review_by_id(reviewId):
+    review = Reviews.query.filter_by(ReviewID=reviewId).first()
+    if not review:
+        return jsonify({"items": []}), 404   # return empty list if not found
+
+    return jsonify({
+        "items": [review.json()]   # wrap inside `items` list
+    })
+
+
+
 
 @app.route('/search', methods=['POST'])
 def search():
