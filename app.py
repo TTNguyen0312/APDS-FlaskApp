@@ -37,6 +37,39 @@ def index():
     clothes = [cloth.json() for cloth in clothes]
     return clothes
 
+@app.route('/search', methods=['POST'])
+def search():
+    if request.is_json:
+        data = request.get_json()
+    else:
+        data = request.form  # fallback to form data
+
+    keyword = data.get("keyword", "").lower()
+    if not keyword:
+        return jsonify({"message": "No keyword provided"}), 400
+
+    # Simple plural handling
+    if keyword.endswith("es"):
+        singular = keyword[:-2]
+    elif keyword.endswith("s"):
+        singular = keyword[:-1]
+    else:
+        singular = keyword + "s"
+
+    results = Clothes.query.filter(
+        (Clothes.ClothTitle.ilike(f"%{keyword}%")) | 
+        (Clothes.ClothTitle.ilike(f"%{singular}%")) |
+        (Clothes.ClothDescription.ilike(f"%{keyword}%")) |
+        (Clothes.ClothDescription.ilike(f"%{singular}%"))
+    ).all()
+
+    return jsonify({
+        "count": len(results),
+        "items": [c.json() for c in results]
+    })
+
+
+
 @app.route('/add', methods=['POST'])
 def add_cloth():
     if request.is_json:
