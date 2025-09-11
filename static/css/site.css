@@ -52,6 +52,10 @@ header [role="banner"] {
   justify-content: center;
 }
 
+header a:hover {
+  text-decoration: none;
+}
+
 .icon-btn {
   font-size: larger;
   background: none;
