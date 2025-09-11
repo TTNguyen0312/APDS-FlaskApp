@@ -2,8 +2,11 @@
 {% block title %}Search “{{ q }}” · Raquelle{% endblock %}
 
 {% block content %}
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
+{% endblock %}
 <!-- Category row under the brand -->
-<nav>
+<nav aria-label="Categories">
     <ul>
         <li><a href="#">Dresses</a></li>
         <li><a href="#">Bottoms</a></li>
@@ -21,19 +24,16 @@
         <p>{{ total }} items found</p>
     </div>
 
-    <form method="get" action="{{ url_for('search') }}">
-        <input type="hidden" name="q" value="{{ q }}">
+    <form>
         <label for="sort">Sort by</label>
         <select id="sort" name="sort">
-            <option value="relevance" {{ 'selected' if sort=='relevance' }}>Relevance</option>
-            <option value="price" {{ 'selected' if sort=='price' }}>Price</option>
-            <option value="newest" {{ 'selected' if sort=='newest' }}>Newest</option>
-            <option value="rating" {{ 'selected' if sort=='rating' }}>Rating</option>
+            <option>Relevance</option>
+            <option>Price</option>
+            <option>Newest</option>
+            <option>Rating</option>
         </select>
-        <!-- Toggle order asc/desc in one button -->
-        <button type="submit" name="order" value="{{ 'asc' if order=='desc' else 'desc' }}" title="Toggle sort order">
-            <i class="fa-solid {{ 'fa-arrow-up-long' if order=='asc' else 'fa-arrow-down-long' }}"
-                aria-hidden="true"></i>
+        <button type="button" title="Toggle order">
+            <i class="fa-solid fa-arrow-up-long" aria-hidden="true"></i>
             <span class="sr-only">Toggle order</span>
         </button>
     </form>
@@ -50,7 +50,127 @@
     </nav>
 </section>
 
-<!-- Product grid -->
+<!-- Product grid (currently hard code for preview, swap out to the commented part later) -->
+  <ul aria-label="Products">
+    <li>
+      <a href="#">
+        <figure>
+          <div aria-label="Elegant A-Line Dress image" role="img"></div>
+          <figcaption>
+            <h3>ELEGANT A-LINE DRESS</h3>
+            <p>A classic A-line dress that flows gracefully, perfect for both casual outings and formal events.</p>
+            <p><strong>$30.00</strong></p>
+          </figcaption>
+        </figure>
+      </a>
+    </li>
+
+    <li>
+      <a href="#">
+        <figure>
+          <div aria-label="Petite High-Waisted Trousers image" role="img"></div>
+          <figcaption>
+            <h3>PETITE HIGH-WAISTED TROUSERS</h3>
+            <p>Chic, high-waisted trousers designed to elongate the legs, tailored for a flattering petite fit.</p>
+            <p><strong>$30.00</strong></p>
+          </figcaption>
+        </figure>
+      </a>
+    </li>
+
+    <li>
+      <a href="#">
+        <figure>
+          <div aria-label="Silk Button-Up Blouse image" role="img"></div>
+          <figcaption>
+            <h3>SILK BUTTON-UP BLOUSE</h3>
+            <p>A luxurious silk blouse with a timeless button-up design, ideal for work or evening wear.</p>
+            <p><strong>$30.00</strong></p>
+          </figcaption>
+        </figure>
+      </a>
+    </li>
+
+    <li>
+      <a href="#">
+        <figure>
+          <div aria-label="Petite Cable Knit Sweater image" role="img"></div>
+          <figcaption>
+            <h3>PETITE CABLE KNIT SWEATER</h3>
+            <p>A cozy cable knit sweater tailored specifically for petites, offering warmth and style.</p>
+            <p><strong>$30.00</strong></p>
+          </figcaption>
+        </figure>
+      </a>
+    </li>
+
+    <li>
+      <a href="#">
+        <figure>
+          <div aria-label="Petite Floral Midi Dress image" role="img"></div>
+          <figcaption>
+            <h3>PETITE FLORAL MIDI DRESS</h3>
+            <p>A beautiful floral midi dress designed for petites, perfect for garden parties and casual days.</p>
+            <p><strong>$30.00</strong></p>
+          </figcaption>
+        </figure>
+      </a>
+    </li>
+
+    <li>
+      <a href="#">
+        <figure>
+          <div aria-label="Lace Trimmed Intimates Set image" role="img"></div>
+          <figcaption>
+            <h3>LACE TRIMMED INTIMATES SET</h3>
+            <p>A delicate lace-trimmed set, combining elegance and comfort for everyday wear.</p>
+            <p><strong>$30.00</strong></p>
+          </figcaption>
+        </figure>
+      </a>
+    </li>
+
+    <li>
+      <a href="#">
+        <figure>
+          <div aria-label="Tailored Wide-Leg Pants image" role="img"></div>
+          <figcaption>
+            <h3>TAILORED WIDE-LEG PANTS</h3>
+            <p>Sleek and stylish wide-leg pants that add a touch of sophistication to any outfit.</p>
+            <p><strong>$30.00</strong></p>
+          </figcaption>
+        </figure>
+      </a>
+    </li>
+
+    <li>
+      <a href="#">
+        <figure>
+          <div aria-label="Classic Wool Overcoat image" role="img"></div>
+          <figcaption>
+            <h3>CLASSIC WOOL OVERCOAT</h3>
+            <p>A timeless wool overcoat that offers warmth and refinement throughout the colder months.</p>
+            <p><strong>$30.00</strong></p>
+          </figcaption>
+        </figure>
+      </a>
+    </li>
+
+    <li>
+      <a href="#">
+        <figure>
+          <div aria-label="Soft Lounge Set image" role="img"></div>
+          <figcaption>
+            <h3>SOFT LOUNGE SET</h3>
+            <p>A cozy lounge set, perfect for relaxing at home while maintaining a chic, put-together look.</p>
+            <p><strong>$30.00</strong></p>
+          </figcaption>
+        </figure>
+      </a>
+    </li>
+  </ul>
+
+<!--
 {% if results %}
 <ul aria-label="Products">
     {% for item in results %}
@@ -60,7 +180,7 @@
 {% else %}
 <p>No results for “{{ q }}”.</p>
 {% endif %}
-
+-->
 <!-- Bottom pagination -->
 <nav aria-label="Pagination">
     <ol>
