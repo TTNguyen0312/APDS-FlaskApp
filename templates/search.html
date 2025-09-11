@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Search “{{ q }}” · Raquelle{% endblock %}
+
+{% block content %}
+<!-- Category row under the brand -->
+<nav>
+    <ul>
+        <li><a href="#">Dresses</a></li>
+        <li><a href="#">Bottoms</a></li>
+        <li><a href="#">Tops</a></li>
+        <li><a href="#">Intimate</a></li>
+        <li><a href="#">Jackets</a></li>
+        <li><a href="#">Trend</a></li>
+    </ul>
+</nav>
+
+<!-- Result info + sort + top pagination -->
+<section>
+    <div>
+        <p>Result for {{ q }}</p>
+        <p>{{ total }} items found</p>
+    </div>
+
+    <form method="get" action="{{ url_for('search') }}">
+        <input type="hidden" name="q" value="{{ q }}">
+        <label for="sort">Sort by</label>
+        <select id="sort" name="sort">
+            <option value="relevance" {{ 'selected' if sort=='relevance' }}>Relevance</option>
+            <option value="price" {{ 'selected' if sort=='price' }}>Price</option>
+            <option value="newest" {{ 'selected' if sort=='newest' }}>Newest</option>
+            <option value="rating" {{ 'selected' if sort=='rating' }}>Rating</option>
+        </select>
+        <!-- Toggle order asc/desc in one button -->
+        <button type="submit" name="order" value="{{ 'asc' if order=='desc' else 'desc' }}" title="Toggle sort order">
+            <i class="fa-solid {{ 'fa-arrow-up-long' if order=='asc' else 'fa-arrow-down-long' }}"
+                aria-hidden="true"></i>
+            <span class="sr-only">Toggle order</span>
+        </button>
+    </form>
+
+    <nav aria-label="Pagination">
+        <ol>
+            <li><span aria-current="page">1</span></li>
+            <li><a href="#">2</a></li>
+            <li><a href="#">3</a></li>
+            <li><a href="#">4</a></li>
+            <li><a href="#">5</a></li>
+            <li><a href="#">&raquo;</a></li>
+        </ol>
+    </nav>
+</section>
+
+<!-- Product grid -->
+{% if results %}
+<ul aria-label="Products">
+    {% for item in results %}
+    {% include "partials/_product_card.html" %}
+    {% endfor %}
+</ul>
+{% else %}
+<p>No results for “{{ q }}”.</p>
+{% endif %}
+
+<!-- Bottom pagination -->
+<nav aria-label="Pagination">
+    <ol>
+        <li><span aria-current="page">1</span></li>
+        <li><a href="#">2</a></li>
+        <li><a href="#">3</a></li>
+        <li><a href="#">4</a></li>
+        <li><a href="#">5</a></li>
+        <li><a href="#">&raquo;</a></li>
+    </ol>
+</nav>
+{% endblock %}
