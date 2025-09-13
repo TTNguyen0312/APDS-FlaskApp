@@ -1,2 +1,9 @@
 flask
 flask_sqlalchemy
+pandas
+numpy
+scikit-learn
+gensim
+pyspellchecker
+nltk
+joblib

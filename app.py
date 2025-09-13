@@ -2,10 +2,15 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify
 import os
+from functions.predict import fused_predict
+import pandas as pd
+from nltk.tokenize import RegexpTokenizer
+from functions.tokenizer import tokenize_df
+
 
 app = Flask(__name__)
 
-db_path = os.path.join(os.path.dirname(__file__), 'sdms.db')
+db_path = os.path.join(os.path.dirname(__file__), 'data/sdms.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -34,19 +39,21 @@ class Clothes(db.Model):
 class Reviews(db.Model):
     ReviewID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ClothingID = db.Column(db.Integer, db.ForeignKey('clothes.ClothingID'), nullable=False)
-    Title = db.Column(db.String, nullable=False)
-    # Text = db.Column(db.Text, nullable=False)
+    Age = db.Column(db.Integer, nullable=True)
+    ReviewTitle = db.Column(db.String, nullable=False)
+    ReviewText = db.Column(db.Text, nullable=False)
     Rating = db.Column(db.Integer, nullable=False)
-    # Recommend = db.Column(db.Integer, nullable=False)  # 0 or 1
+    Recommended = db.Column(db.Integer, nullable=False)  # 0 or 1
 
     def json(self):
         return {
             "ReviewID": self.ReviewID,
             "ClothingID": self.ClothingID,
-            "Title": self.Title,
-            "Description": self.Description,
+            "Age": self.Age,
+            "ReviewTitle": self.ReviewTitle,
+            "ReviewText": self.ReviewText,
             "Rating": self.Rating,
-            "Recommend": self.Recommend
+            "Recommended": self.Recommended
         }
 
 
@@ -74,17 +81,15 @@ def get_cloth_by_id(clothId):
     })
     
 
-@app.route('/reviews/<int:reviewId>', methods=['GET'])
-def get_review_by_id(reviewId):
-    review = Reviews.query.filter_by(ReviewID=reviewId).first()
-    if not review:
+@app.route('/reviews/<int:clothId>', methods=['GET'])
+def get_review_by_clothid(clothId):
+    reviews = Reviews.query.filter_by(ClothingID=clothId).all()
+    if not reviews:
         return jsonify({"items": []}), 404   # return empty list if not found
 
     return jsonify({
-        "items": [review.json()]   # wrap inside `items` list
+        "items": [review.json() for review in reviews]   # wrap inside `items` list
     })
-
-
 
 
 @app.route('/search', methods=['POST'])
@@ -120,7 +125,7 @@ def search():
 
 
 
-@app.route('/add', methods=['POST'])
+@app.route('/add-cloth', methods=['POST'])
 def add_cloth():
     if request.is_json:
         data = request.get_json()
@@ -140,6 +145,57 @@ def add_cloth():
     db.session.commit()
 
     return jsonify(new_item.json()), 201
+
+@app.route('/add-review', methods=['POST'])
+def add_review():
+    if request.is_json:
+        data = request.get_json()
+    else:
+        data = request.form  # fallback to form data
+
+    # --- Create new Review ---
+    new_item = Reviews(
+        ClothingID=data.get('ClothingID'),
+        ReviewTitle=data.get('Title'),
+        ReviewText=data.get('Description'),   # assuming you named column "Text" in Reviews model
+        Age=data.get('Age'),
+        Rating=data.get('Rating'),
+        Recommended=0   # default, will update after fused_predict
+    )
+    db.session.add(new_item)
+    db.session.commit()
+
+    # --- Run prediction ---
+    # Combine ReviewTitle and ReviewText safely
+    combined_text = f"{new_item.ReviewTitle or ''} {new_item.ReviewText or ''}".strip()
+
+    # Wrap into a DataFrame
+    predict_df = pd.DataFrame({"Text": [combined_text]})
+
+    # Apply tokenizer
+    predict_df["tokens"] = tokenize_df(predict_df["Text"])
+
+    # Pass tokenized data to fused_predict
+    prediction_result = fused_predict(predict_df["tokens"], word_dict={})
+    recommend = int(prediction_result["fused_prediction"])  # 0 or 1
+    new_item.Recommended = recommend
+
+    # --- Update PositiveFeedbackCount if recommended ---
+    # if recommend == 1:
+    #     cloth = Clothes.query.get(new_item.ClothingID)
+    #     if cloth:
+    #         cloth.PositiveFeedbackCount = cloth.PositiveFeedbackCount + 1
+
+    db.session.commit()
+
+    return {
+        "message": "Review added successfully",
+        "review": new_item.json(),
+        "prediction": recommend
+    }, 201
+
+
+
 
 
 if __name__ == '__main__':
