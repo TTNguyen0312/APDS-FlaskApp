@@ -180,12 +180,6 @@ def add_review():
     recommend = int(prediction_result["fused_prediction"])  # 0 or 1
     new_item.Recommended = recommend
 
-    # Update PositiveFeedbackCount if recommended 
-    if recommend == 1:
-        cloth = Clothes.query.get(new_item.ClothingID)
-        if cloth:
-            cloth.PositiveFeedbackCount = cloth.PositiveFeedbackCount + 1
-
     db.session.commit()
 
     return {

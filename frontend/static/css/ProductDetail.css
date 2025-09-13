@@ -225,3 +225,9 @@
     grid-template-columns: 1fr;
   }
 }
+
+.pagination { margin-top: 1rem; text-align: center; }
+.pagination ol { display: flex; justify-content: center; list-style: none; gap: 0.5rem; padding: 0; }
+.pagination li { padding: 0.3rem 0.6rem; border: 1px solid #ccc; border-radius: 4px; }
+.pagination li span { font-weight: bold; }
+.pagination li a { text-decoration: none; color: inherit; }

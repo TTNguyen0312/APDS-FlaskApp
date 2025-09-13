@@ -4,12 +4,7 @@
 {% block content %}
 {% block head_extra %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
-<style>
-  .pagination ol { display: flex; list-style: none; gap: 0.5rem; padding: 0; }
-  .pagination li { padding: 0.3rem 0.6rem; border: 1px solid #ccc; border-radius: 4px; }
-  .pagination li span { font-weight: bold; }
-  .pagination li a { text-decoration: none; color: inherit; }
-</style>
+
 {% endblock %}
 
 <ul id="clothes-section" aria-label="Products">
@@ -33,94 +28,9 @@
   {% endfor %}
 </ul>
 
-
 <nav aria-label="Pagination" class="pagination">
   <ol id="pagination-controls"></ol>
 </nav>
 
-<script>
-  const itemsPerPage = 12;
-  const items = document.querySelectorAll(".product-item");
-  const totalPages = Math.ceil(items.length / itemsPerPage);
-  const paginationContainer = document.getElementById("pagination-controls");
-  let currentPage = 1;
-
-  function showPage(page) {
-    currentPage = page;
-    const start = (page - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-
-    items.forEach((item, index) => {
-      item.style.display = index >= start && index < end ? "block" : "none";
-    });
-
-    renderPagination();
-  }
-
-  function renderPagination() {
-    paginationContainer.innerHTML = "";
-
-    // Previous arrow
-    if (currentPage > 1) {
-      const prev = document.createElement("li");
-      prev.innerHTML = `<a href="#">«</a>`;
-      prev.addEventListener("click", e => { e.preventDefault(); showPage(currentPage - 1); });
-      paginationContainer.appendChild(prev);
-    }
-
-    // Page numbers (show 2 before and 2 after current page)
-    const startPage = Math.max(1, currentPage - 2);
-    const endPage = Math.min(totalPages, currentPage + 2);
-
-    if (startPage > 1) {
-      const li = document.createElement("li");
-      li.innerHTML = `<a href="#">1</a>`;
-      li.addEventListener("click", e => { e.preventDefault(); showPage(1); });
-      paginationContainer.appendChild(li);
-
-      if (startPage > 2) {
-        const dots = document.createElement("li");
-        dots.innerHTML = `<span>...</span>`;
-        paginationContainer.appendChild(dots);
-      }
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      const li = document.createElement("li");
-      if (i === currentPage) {
-        li.innerHTML = `<span>${i}</span>`;
-      } else {
-        li.innerHTML = `<a href="#">${i}</a>`;
-        li.addEventListener("click", e => { e.preventDefault(); showPage(i); });
-      }
-      paginationContainer.appendChild(li);
-    }
-
-    if (endPage < totalPages) {
-      if (endPage < totalPages - 1) {
-        const dots = document.createElement("li");
-        dots.innerHTML = `<span>...</span>`;
-        paginationContainer.appendChild(dots);
-      }
-
-      const li = document.createElement("li");
-      li.innerHTML = `<a href="#">${totalPages}</a>`;
-      li.addEventListener("click", e => { e.preventDefault(); showPage(totalPages); });
-      paginationContainer.appendChild(li);
-    }
-
-    // Next arrow
-    if (currentPage < totalPages) {
-      const next = document.createElement("li");
-      next.innerHTML = `<a href="#">»</a>`;
-      next.addEventListener("click", e => { e.preventDefault(); showPage(currentPage + 1); });
-      paginationContainer.appendChild(next);
-    }
-  }
-
-  // Initialize
-  showPage(1);
-</script>
-
-
+<script src="{{ url_for('static', filename='js/landingPage.js') }}"></script>
 {% endblock %}

@@ -36,6 +36,9 @@ def item_detail(cloth_id):
         data = response.json()
         # assuming API returns a dict with keys: ClothTitle, ClothDescription, Department, DivisionName, price, images
         cloth = data.get("items", [{}])[0]
+        reviews_response = requests.get(f"{backend_url}/reviews/{cloth_id}", timeout=5)
+        reviews = reviews_response.json().get("items", []) if reviews_response.status_code == 200 else []
+
     except requests.RequestException as e:
         # fallback if API fails
         return f"Error fetching cloth data: {e}", 500
@@ -59,42 +62,66 @@ def item_detail(cloth_id):
         "price": cloth.get("price", 0),
         "images": cloth.get("images", []),
         "main_image": cloth.get("images", [None])[0],
+        "reviews": reviews
     }
-    print("Product details:", product)
 
-    return render_template('ProductDetail.html', product=product)
+    return render_template('productDetail.html', product=product, backend_url=backend_url)
 
 
 # ---------- CREATE REVIEW (POST /review) ----------
-@app.post('/review')
+@app.post('/add-review')
 def create_review():
     try:
         data = request.get_json(force=True) or {}
     except Exception:
         return jsonify({"message": "Invalid JSON body", "review": None}), 400
 
-    cloth_id = str(data.get("clothId") or "").strip()
-    title = (data.get("reviewTitle") or "").strip()
-    text = (data.get("reviewText") or "").strip()
+    # Validate required fields
+    cloth_id = str(data.get("ClothingID") or 0).strip()
+    title = (data.get("ReviewTitle") or "").strip()
+    text = (data.get("ReviewText") or "").strip()
 
     if not cloth_id:
-        return jsonify({"message": "clothId is required", "review": None}), 400
+        return jsonify({"message": "ClothingID is required", "review": None}), 400
     if not title:
-        return jsonify({"message": "reviewTitle is required", "review": None}), 400
+        return jsonify({"message": "ReviewTitle is required", "review": None}), 400
     if not text:
-        return jsonify({"message": "reviewText is required", "review": None}), 400
+        return jsonify({"message": "ReviewText is required", "review": None}), 400
 
-    review = make_review(cloth_id, title, text)
-    reviews_store[cloth_id].insert(0, review)
+    try:
+        # Forward request to backend API
+        response = requests.post(
+            f"{backend_url}/add-review",
+            json={
+                "ClothingID": cloth_id,
+                "Title": title,
+                "Description": text,
+                "Age": data.get("Age"),
+                "Rating": data.get("Rating"),
+            },
+        )
+    except requests.RequestException as e:
+        return jsonify({"message": f"Failed to reach backend API: {str(e)}", "review": None}), 502
 
-    return jsonify({"message": "successfully created", "review": review}), 201
+    if response.status_code != 201:
+        return jsonify({"message": "Backend API error", "details": response.text, "review": None}), response.status_code
+
+    return jsonify(response.json()), 201
 
 # ---------- GET ALL REVIEWS OF A CLOTH (GET /review/<clothId>) ----------
 @app.get('/review/<cloth_id>')
 def get_reviews(cloth_id):
-    items = list(reviews_store.get(str(cloth_id), []))
-    items.sort(key=lambda r: r.get("createdAt", ""), reverse=True)
-    return jsonify({"message": "success", "review": items}), 200
+    try:
+        # Call your backend API
+        response = requests.get(f"{backend_url}/reviews/{cloth_id}", timeout=5)
+    except requests.RequestException as e:
+        return jsonify({"message": f"Failed to reach backend API: {str(e)}", "review": []}), 502
+
+    if response.status_code != 200:
+        return jsonify({"message": "Backend API error", "details": response.text, "review": []}), response.status_code
+
+    # Return backend JSON as-is (or reformat if needed)
+    return jsonify(response.json()), 200
 
 @app.route('/search')
 def search():
