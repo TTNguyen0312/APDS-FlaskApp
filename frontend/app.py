@@ -98,7 +98,44 @@ def get_reviews(cloth_id):
 
 @app.route('/search')
 def search():
-    return render_template("search.html")
+    keyword = request.args.get("q", "").strip()
+    page = request.args.get("page", 1, type=int)
+    sort = request.args.get("sort", "relevance")
+    order = request.args.get("order", "asc")
+    per_page = 12
+
+    products = []
+    total = 0
+    if keyword:
+        response = requests.post(f"{backend_url}/search", json={"keyword": keyword})
+        products = response.json().get("items", [])
+        total = response.json().get("count", 0)
+
+    # Calculate total pages safely
+    total_pages = (total + per_page - 1) // per_page if total else 1
+
+    # Slice products for the current page
+    start_idx = (page - 1) * per_page
+    end_idx = start_idx + per_page
+    paginated_products = products[start_idx:end_idx]
+
+    # Compute safe page range for template
+    start_page = max(1, page - 2)
+    end_page = min(total_pages, page + 2)
+
+    return render_template(
+        "search.html",
+        q=keyword,
+        items=paginated_products,
+        total=total,
+        page=page,
+        total_pages=total_pages,
+        sort=sort,
+        order=order,
+        start_page=start_page,
+        end_page=end_page
+    )
+
 
 
 if __name__ == "__main__":

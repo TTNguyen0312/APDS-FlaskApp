@@ -2,183 +2,82 @@
 {% block title %}Search “{{ q }}” · DS-G6{% endblock %}
 
 {% block content %}
+
 {% block head_extra %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
+<style>
+  .pagination { margin-top: 2rem; text-align: center; }
+  .pagination ol { display: flex; justify-content: center; list-style: none; gap: 0.5rem; padding: 0; }
+  .pagination li { padding: 0.3rem 0.6rem; border: 1px solid #ccc; border-radius: 4px; }
+  .pagination li span { font-weight: bold; }
+  .pagination li a { text-decoration: none; color: inherit; }
+</style>
 {% endblock %}
-
-<!-- Result info + sort + top pagination -->
-<section>
-    <div>
-        <p>Result for {{ q }}</p>
-        <p>{{ total }} items found</p>
-    </div>
-
-    <form>
-        <label for="sort">Sort by</label>
-        <select id="sort" name="sort">
-            <option>Relevance</option>
-            <option>Price</option>
-            <option>Newest</option>
-            <option>Rating</option>
-        </select>
-        <button type="button" title="Toggle order">
-            <i class="fa-solid fa-arrow-up-long" aria-hidden="true"></i>
-            <span class="sr-only">Toggle order</span>
-        </button>
-    </form>
-
-    <nav aria-label="Pagination">
-        <ol>
-            <li><span aria-current="page">1</span></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li>
-            <li><a href="#">&raquo;</a></li>
-        </ol>
-    </nav>
+<section style="text-align: center; margin: 1.5rem 0;">
+  <p style="font-weight: bold; font-size: 1.2rem;">Search Results for “{{ q }}”</p>
+  <p style="font-weight: bold; font-size: 1.1rem;">{{ total }} items found</p>
 </section>
 
-<!-- Product grid (currently hard code for preview, swap out to the commented part later) -->
-  <ul aria-label="Products">
-    <li>
-      <a href="#">
-        <figure>
-          <div aria-label="Elegant A-Line Dress image" role="img"></div>
-          <figcaption>
-            <h3>ELEGANT A-LINE DRESS</h3>
-            <p>A classic A-line dress that flows gracefully, perfect for both casual outings and formal events.</p>
-            <p><strong>$30.00</strong></p>
-          </figcaption>
-        </figure>
-      </a>
-    </li>
 
-    <li>
-      <a href="#">
-        <figure>
-          <div aria-label="Petite High-Waisted Trousers image" role="img"></div>
-          <figcaption>
-            <h3>PETITE HIGH-WAISTED TROUSERS</h3>
-            <p>Chic, high-waisted trousers designed to elongate the legs, tailored for a flattering petite fit.</p>
-            <p><strong>$30.00</strong></p>
-          </figcaption>
-        </figure>
-      </a>
-    </li>
-
-    <li>
-      <a href="#">
-        <figure>
-          <div aria-label="Silk Button-Up Blouse image" role="img"></div>
-          <figcaption>
-            <h3>SILK BUTTON-UP BLOUSE</h3>
-            <p>A luxurious silk blouse with a timeless button-up design, ideal for work or evening wear.</p>
-            <p><strong>$30.00</strong></p>
-          </figcaption>
-        </figure>
-      </a>
-    </li>
-
-    <li>
-      <a href="#">
-        <figure>
-          <div aria-label="Petite Cable Knit Sweater image" role="img"></div>
-          <figcaption>
-            <h3>PETITE CABLE KNIT SWEATER</h3>
-            <p>A cozy cable knit sweater tailored specifically for petites, offering warmth and style.</p>
-            <p><strong>$30.00</strong></p>
-          </figcaption>
-        </figure>
-      </a>
-    </li>
-
-    <li>
-      <a href="#">
-        <figure>
-          <div aria-label="Petite Floral Midi Dress image" role="img"></div>
-          <figcaption>
-            <h3>PETITE FLORAL MIDI DRESS</h3>
-            <p>A beautiful floral midi dress designed for petites, perfect for garden parties and casual days.</p>
-            <p><strong>$30.00</strong></p>
-          </figcaption>
-        </figure>
-      </a>
-    </li>
-
-    <li>
-      <a href="#">
-        <figure>
-          <div aria-label="Lace Trimmed Intimates Set image" role="img"></div>
-          <figcaption>
-            <h3>LACE TRIMMED INTIMATES SET</h3>
-            <p>A delicate lace-trimmed set, combining elegance and comfort for everyday wear.</p>
-            <p><strong>$30.00</strong></p>
-          </figcaption>
-        </figure>
-      </a>
-    </li>
-
-    <li>
-      <a href="#">
-        <figure>
-          <div aria-label="Tailored Wide-Leg Pants image" role="img"></div>
-          <figcaption>
-            <h3>TAILORED WIDE-LEG PANTS</h3>
-            <p>Sleek and stylish wide-leg pants that add a touch of sophistication to any outfit.</p>
-            <p><strong>$30.00</strong></p>
-          </figcaption>
-        </figure>
-      </a>
-    </li>
-
-    <li>
-      <a href="#">
-        <figure>
-          <div aria-label="Classic Wool Overcoat image" role="img"></div>
-          <figcaption>
-            <h3>CLASSIC WOOL OVERCOAT</h3>
-            <p>A timeless wool overcoat that offers warmth and refinement throughout the colder months.</p>
-            <p><strong>$30.00</strong></p>
-          </figcaption>
-        </figure>
-      </a>
-    </li>
-
-    <li>
-      <a href="#">
-        <figure>
-          <div aria-label="Soft Lounge Set image" role="img"></div>
-          <figcaption>
-            <h3>SOFT LOUNGE SET</h3>
-            <p>A cozy lounge set, perfect for relaxing at home while maintaining a chic, put-together look.</p>
-            <p><strong>$30.00</strong></p>
-          </figcaption>
-        </figure>
-      </a>
-    </li>
-  </ul>
-
-<!--
-{% if results %}
-<ul aria-label="Products">
-    {% for item in results %}
-    {% include "partials/_product_card.html" %}
-    {% endfor %}
+<ul id="clothes-section" aria-label="Products">
+  {% for item in items %}
+  <li class="product-item">
+    <a href="{{ url_for('item_detail', cloth_id=item.ClothingID) }}">
+      <figure>
+        <div
+          aria-label="{{ item.ClothTitle }} image"
+          role="img"
+          style="background-image: url('{{ item.image_url or url_for('static', filename='img/placeholder.png') }}'); width:360px; height:360px; background-size:cover; background-position:center;">
+        </div>
+        <figcaption>
+          <h3>{{ item.ClothTitle|upper or 'PRODUCT TITLE' }}</h3>
+          <p>{{ item.ClothDescription or 'No description available.' }}</p>
+          <p><strong>{{ item.Department or 'Department' }}</strong> – {{ item.DivisionName or 'Division' }}</p>
+        </figcaption>
+      </figure>
+    </a>
+  </li>
+  {% endfor %}
 </ul>
-{% else %}
-<p>No results for “{{ q }}”.</p>
-{% endif %}
--->
-<!-- Bottom pagination -->
-<nav aria-label="Pagination">
-    <ol>
-        <li><span aria-current="page">1</span></li>
-        <li><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">4</a></li>
-        <li><a href="#">5</a></li>
-        <li><a href="#">&raquo;</a></li>
-    </ol>
+
+<!-- Pagination at the bottom -->
+{% if total_pages > 1 %}
+<nav aria-label="Pagination" class="pagination">
+  <ol>
+    <!-- Previous -->
+    {% if page > 1 %}
+    <li><a href="{{ url_for('search', q=q, page=page-1) }}">«</a></li>
+    {% endif %}
+
+    <!-- Page numbers -->
+    {% if start_page > 1 %}
+      <li><a href="{{ url_for('search', q=q, page=1) }}">1</a></li>
+      {% if start_page > 2 %}
+        <li><span>...</span></li>
+      {% endif %}
+    {% endif %}
+
+    {% for p in range(start_page, end_page + 1) %}
+      {% if p == page %}
+        <li><span>{{ p }}</span></li>
+      {% else %}
+        <li><a href="{{ url_for('search', q=q, page=p) }}">{{ p }}</a></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if end_page < total_pages %}
+      {% if end_page < total_pages - 1 %}
+        <li><span>...</span></li>
+      {% endif %}
+      <li><a href="{{ url_for('search', q=q, page=total_pages) }}">{{ total_pages }}</a></li>
+    {% endif %}
+
+    <!-- Next -->
+    {% if page < total_pages %}
+    <li><a href="{{ url_for('search', q=q, page=page+1) }}">»</a></li>
+    {% endif %}
+  </ol>
 </nav>
+{% endif %}
+
 {% endblock %}
