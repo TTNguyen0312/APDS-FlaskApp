@@ -44,7 +44,6 @@ class Reviews(db.Model):
     ReviewText = db.Column(db.Text, nullable=False)
     Rating = db.Column(db.Integer, nullable=False)
     Recommended = db.Column(db.Integer, nullable=False)  # 0 or 1
-    PositiveFeedbackCount = db.Column(db.Integer, default=0)
 
     def json(self):
         return {
@@ -54,8 +53,7 @@ class Reviews(db.Model):
             "ReviewTitle": self.ReviewTitle,
             "ReviewText": self.ReviewText,
             "Rating": self.Rating,
-            "Recommended": self.Recommended,
-            "PositiveFeedbackCount": self.PositiveFeedbackCount
+            "Recommended": self.Recommended
         }
 
 
