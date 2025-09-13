@@ -44,6 +44,7 @@ class Reviews(db.Model):
     ReviewText = db.Column(db.Text, nullable=False)
     Rating = db.Column(db.Integer, nullable=False)
     Recommended = db.Column(db.Integer, nullable=False)  # 0 or 1
+    PositiveFeedbackCount = db.Column(db.Integer, default=0)
 
     def json(self):
         return {
@@ -53,7 +54,8 @@ class Reviews(db.Model):
             "ReviewTitle": self.ReviewTitle,
             "ReviewText": self.ReviewText,
             "Rating": self.Rating,
-            "Recommended": self.Recommended
+            "Recommended": self.Recommended,
+            "PositiveFeedbackCount": self.PositiveFeedbackCount
         }
 
 
@@ -180,11 +182,11 @@ def add_review():
     recommend = int(prediction_result["fused_prediction"])  # 0 or 1
     new_item.Recommended = recommend
 
-    # --- Update PositiveFeedbackCount if recommended ---
-    # if recommend == 1:
-    #     cloth = Clothes.query.get(new_item.ClothingID)
-    #     if cloth:
-    #         cloth.PositiveFeedbackCount = cloth.PositiveFeedbackCount + 1
+    # Update PositiveFeedbackCount if recommended 
+    if recommend == 1:
+        cloth = Clothes.query.get(new_item.ClothingID)
+        if cloth:
+            cloth.PositiveFeedbackCount = cloth.PositiveFeedbackCount + 1
 
     db.session.commit()
 
