@@ -4,9 +4,17 @@
         <a href="/" aria-label="Raquelle home">
             <h1>RAQUELLE</h1>
         </a>
-        <a href="/search" aria-label="Search">
+        <button type="button" id="searchToggle" class="icon-btn" aria-expanded="false" aria-controls="searchBar" aria-label="Open search">
             <i class="fa-solid fa-magnifying-glass"></i>
-        </a>
+        </button>
+       
+        <form id="searchBar" class="search" role="search" method="get" action="{{ url_for('search') }}">
+            <button type="button" id="searchClose" aria-label="Close search">&times;</button>
+            <div class="search-input">
+                <input name="q" id="q" placeholder="Find your clothes..." autocomplete="off" required />
+                <button type="submit">Search</button>
+            </div>
+        </form>
     </div>
 
     <!-- Primary navigation row -->
