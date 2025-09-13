@@ -1,67 +1,46 @@
+import os
+
+import requests
 from flask import Flask, render_template, jsonify, request, url_for
 from collections import defaultdict
 from datetime import datetime
 from typing import DefaultDict, List, Dict, Any
 import uuid
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 app = Flask(__name__)
 
 reviews_store: DefaultDict[str, List[Dict[str, Any]]] = defaultdict(list)
-
-# In-memory store (mock)
-reviews_store: DefaultDict[str, List[Dict[str, Any]]] = defaultdict(list)
-
-def make_review(cloth_id: str, title: str, text: str) -> Dict[str, Any]:
-    return {
-        "reviewId": str(uuid.uuid4()),
-        "clothId": str(cloth_id),
-        "reviewTitle": title,
-        "reviewText": text,
-        "recommended": False, 
-        "positiveFeedbackCount": 0,
-        "createdAt": datetime.utcnow().isoformat() + "Z",
-    }
-
-def seed_mock_reviews() -> None:
-    # seed ít review cho demo
-    if not reviews_store["1"]:
-        reviews_store["1"].extend([
-            make_review("1", "Nice quality", "Fabric is soft and comfy. True to size."),
-            make_review("1", "Good but a bit thin", "Looks great, slightly thin for winter."),
-            make_review("1", "Not my style", "Color looks different from photos on my screen."),
-        ])
-    if not reviews_store["2"]:
-        reviews_store["2"].extend([
-            make_review("2", "Excellent fit", "Fits perfectly. Will buy again."),
-        ])
-
-seed_mock_reviews()
+backend_url = os.getenv("BACKEND_URL", "http://localhost:5000")
 
 @app.route('/')
 def home():
-    return render_template('landingPage.html')
+    try:
+        response = requests.get(f"{backend_url}/clothes")
+        response.raise_for_status()
+        items = response.json()
+    except Exception as e:
+        print("Error fetching clothes:", e)
+        items = []
+    return render_template("LandingPage.html", items=items)
+
 
 @app.route('/item/<int:cloth_id>', methods=['GET'])
 def item_detail(cloth_id):
-    # MOCK demo
-    images = [
-        url_for('static', filename='img/clothes.jpg'),
-        url_for('static', filename='img/placeholder-120x120.png'),
-        url_for('static', filename='img/placeholder-120x120.png'),
-        url_for('static', filename='img/placeholder-120x120.png'),
-        url_for('static', filename='img/placeholder-120x120.png'),
-        url_for('static', filename='img/placeholder-120x120.png'),
-    ]
-    # dữ liệu “cloth” theo spec
-    cloth = {
-        "clothTitle": f"Clothes {cloth_id}",
-        "clothDescription": "This is a sample product detail page.",
-        "price": 100000,
-        "brand": "Business’ name",
-        "images": images,
-    }
+    try:
+        response = requests.get(f"{backend_url}/clothes/{cloth_id}")
+        response.raise_for_status()
+        data = response.json()
+        # assuming API returns a dict with keys: ClothTitle, ClothDescription, Department, DivisionName, price, images
+        cloth = data.get("items", [{}])[0]
+    except requests.RequestException as e:
+        # fallback if API fails
+        return f"Error fetching cloth data: {e}", 500
 
-    # --- Content negotiation: JSON khi Accept: application/json hoặc ?format=json ---
+    # --- Content negotiation: JSON ---
     wants_json = (
         request.args.get("format") == "json" or
         request.accept_mimetypes["application/json"] >= request.accept_mimetypes["text/html"]
@@ -69,17 +48,22 @@ def item_detail(cloth_id):
     if wants_json:
         return jsonify({"items": [cloth]})
 
-    # --- HTML (server-side render) ---
+    # --- HTML render ---
     product = {
         "id": cloth_id,
-        "name": cloth["clothTitle"],
-        "description": cloth["clothDescription"],
-        "price": cloth["price"],
-        "brand": cloth["brand"],
-        "main_image": images[0] if images else None,
-        "thumbs": images[1:] if len(images) > 1 else [],
+        "ClothTitle": cloth.get("ClothTitle", f"Clothes {cloth_id}"),
+        "ClothDescription": cloth.get("ClothDescription", "No description available."),
+        "ClassName": cloth.get("ClassName", "Class"),
+        "Department": cloth.get("Department", "Fashion"),
+        "DivisionName": cloth.get("DivisionName", "Division"),
+        "price": cloth.get("price", 0),
+        "images": cloth.get("images", []),
+        "main_image": cloth.get("images", [None])[0],
     }
+    print("Product details:", product)
+
     return render_template('ProductDetail.html', product=product)
+
 
 # ---------- CREATE REVIEW (POST /review) ----------
 @app.post('/review')
@@ -117,5 +101,5 @@ def search():
     return render_template("search.html")
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=8000, debug=True)

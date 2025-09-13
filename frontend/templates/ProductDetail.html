@@ -1,8 +1,7 @@
-{% extends "base.html" %} {% block content %} {% block head_extra %}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/ProductDetail.css') }}"
-/>
+{% extends "base.html" %} 
+{% block content %} 
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ProductDetail.css') }}" />
 {% endblock %}
 
 <main class="product-detail" data-cloth-id="{{ product.id }}">
@@ -10,88 +9,36 @@
     <!-- LEFT: Gallery -->
     <div class="product-detail__gallery">
       <div class="product-detail__image-main">
-        <img
-          src="{{ product.main_image or url_for('static', filename='img/clothes.jpg') }}"
-          alt="{{ product.name }}"
-        />
-      </div>
-
-      <div class="product-detail__thumbnails">
-        {% for src in (product.images|default([], true))[1:] %}
-        <button
-          class="product-detail__thumbnail"
-          aria-label="Thumbnail {{ loop.index }}"
-        >
-          <img src="{{ src }}" alt="thumb {{ loop.index }}" />
-        </button>
-        {% endfor %} {% for i in range(5) %} {% set src =
-        ((product.images|default([], true))[i+1]) or url_for('static',
-        filename='img/placeholder-120x120.png') %}
-        <button
-          class="product-detail__thumbnail"
-          aria-label="Thumbnail {{ i+1 }}"
-        >
-          <img src="{{ src }}" alt="thumb {{ i+1 }}" />
-        </button>
-        {% endfor %}
+        <div
+          role="img"
+          aria-label="{{ product.ClothTitle }}"
+          style="background-image: url('{{ product.main_image or url_for('static', filename='img/placeholder.png') }}'); width:360px; height:360px; background-size:cover; background-position:center;">
+        </div>
       </div>
     </div>
 
     <!-- RIGHT: Info -->
     <div class="product-detail__info">
-      <div class="product-detail__seller">
-        <div class="product-detail__avatar"></div>
-        <span class="product-detail__seller-name"
-          >{{ product.brand or "Business’ name" }}</span
-        >
-      </div>
+      <h2 class="product-detail__title">{{ product.ClothTitle|upper }}</h2>
+      <p class="product-detail__description">{{ product.ClothDescription }}</p>
 
-      <h2 class="product-detail__title">{{ product.name }}</h2>
-      <p class="product-detail__description">{{ product.description }}</p>
+      <div class="product-detail__meta">
+        {% if product.ClassName %}
+          <p><strong>Class:</strong> {{ product.ClassName }}</p>
+        {% endif %}
+        {% if product.Department %}
+          <p><strong>Department:</strong> {{ product.Department }}</p>
+        {% endif %}
+        {% if product.DivisionName %}
+          <p><strong>Division:</strong> {{ product.DivisionName }}</p>
+        {% endif %}
+      </div>
 
       <div class="product-detail__price">
         <span class="product-detail__price-label">Price</span>
         <span class="product-detail__price-value">
           {{ "{:,.0f}".format(product.price|default(0)) }} VND
         </span>
-      </div>
-
-      <div class="product-detail__delivery">
-        <span class="product-detail__delivery-label">Delivery on:</span>
-        <span class="product-detail__delivery-info">
-          <i class="fa-solid fa-truck-fast" aria-hidden="true"></i>
-          Delivery within 3–4 days after handover to the carrier
-        </span>
-      </div>
-
-      <div class="product-detail__quantity">
-        <span class="product-detail__quantity-label">Amount</span>
-        <div
-          class="product-detail__quantity-controls"
-          data-min="1"
-          data-max="99"
-        >
-          <button
-            class="product-detail__quantity-btn"
-            data-action="dec"
-            aria-label="Decrease"
-          >
-            −
-          </button>
-          <input
-            class="product-detail__quantity-input"
-            value="1"
-            min="1"
-            max="99"
-          />
-          <button
-            class="product-detail__quantity-btn"
-            data-action="inc"
-            aria-label="Increase"
-          >
-            +
-          </button>
-        </div>
       </div>
 
       <div class="product-detail__actions">
@@ -109,23 +56,15 @@
 
   <section class="product-detail__section">
     <h3 class="product-detail__section-title">PRODUCT DETAIL</h3>
-    <p class="product-detail__section-text">{{ product.description }}</p>
+    <p class="product-detail__section-text">{{ product.ClothDescription }}</p>
   </section>
 
-  {# ===== PRODUCT FEEDBACK ===== #}
+  <!-- PRODUCT FEEDBACK -->
   <section class="product-reviews" id="reviews">
     <h3 class="product-reviews__title">PRODUCT FEEDBACK</h3>
 
-    <!-- Create review form -->
-    <form
-      id="reviewForm"
-      class="product-reviews__form"
-      action="javascript:void(0);"
-    >
-      <div class="product-reviews__avatar" aria-hidden="true"></div>
-
+    <form id="reviewForm" class="product-reviews__form" action="javascript:void(0);">
       <div class="product-reviews__form-fields">
-        <!-- Title + submit -->
         <div class="product-reviews__input-wrap">
           <input
             id="reviewTitle"
@@ -135,16 +74,11 @@
             maxlength="120"
             required
           />
-          <button
-            class="product-reviews__send"
-            type="submit"
-            aria-label="Send comment"
-          >
+          <button class="product-reviews__send" type="submit" aria-label="Send comment">
             <i class="fa-solid fa-paper-plane"></i>
           </button>
         </div>
 
-        <!-- Review text -->
         <textarea
           id="reviewText"
           class="product-reviews__textarea"
@@ -153,25 +87,12 @@
           required
         ></textarea>
 
-        <p
-          class="product-reviews__error"
-          id="reviewError"
-          role="alert"
-          hidden
-        ></p>
+        <p id="reviewError" class="product-reviews__error" role="alert" hidden></p>
       </div>
     </form>
 
-    <!-- List -->
-    <div
-      id="reviewsList"
-      class="product-reviews__list"
-      aria-live="polite"
-    ></div>
+    <div id="reviewsList" class="product-reviews__list" aria-live="polite"></div>
   </section>
 </main>
-<script
-  src="{{ url_for('static', filename='js/ProductDetail.js') }}"
-  defer
-></script>
+
 {% endblock %}
