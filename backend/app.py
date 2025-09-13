@@ -22,8 +22,7 @@ class Clothes(db.Model):
     Department = db.Column(db.String, nullable=True)
     ClassName = db.Column(db.String, nullable=True)
     DivisionName = db.Column(db.String, nullable=True)
-    PositiveFeedbackCount = db.Column(db.Integer, default=0)
-
+    
     def json(self):
         return {
             'ClothingID': self.ClothingID,
@@ -31,8 +30,7 @@ class Clothes(db.Model):
             'ClothDescription': self.ClothDescription,
             'Department': self.Department,
             'ClassName': self.ClassName,
-            'DivisionName': self.DivisionName,
-            'PositiveFeedbackCount': self.PositiveFeedbackCount
+            'DivisionName': self.DivisionName
         }
         
         
@@ -44,6 +42,7 @@ class Reviews(db.Model):
     ReviewText = db.Column(db.Text, nullable=False)
     Rating = db.Column(db.Integer, nullable=False)
     Recommended = db.Column(db.Integer, nullable=False)  # 0 or 1
+    PositiveFeedbackCount = db.Column(db.Integer, default=0)
 
     def json(self):
         return {
@@ -53,7 +52,8 @@ class Reviews(db.Model):
             "ReviewTitle": self.ReviewTitle,
             "ReviewText": self.ReviewText,
             "Rating": self.Rating,
-            "Recommended": self.Recommended
+            "Recommended": self.Recommended,
+            "PositiveFeedbackCount": self.PositiveFeedbackCount
         }
 
 
@@ -138,7 +138,6 @@ def add_cloth():
         Department=data.get('Department'),
         ClassName=data.get('ClassName'),
         DivisionName=data.get('DivisionName'),
-        PositiveFeedbackCount=data.get('PositiveFeedbackCount', 0)
     )
 
     db.session.add(new_item)
@@ -160,7 +159,8 @@ def add_review():
         ReviewText=data.get('Description'),   # assuming you named column "Text" in Reviews model
         Age=data.get('Age'),
         Rating=data.get('Rating'),
-        Recommended=0   # default, will update after fused_predict
+        Recommended=0,   # default, will update after fused_predict
+        PositiveFeedbackCount=0  # default
     )
     db.session.add(new_item)
     db.session.commit()
