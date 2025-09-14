@@ -1,5 +1,4 @@
 import os
-
 import requests
 from flask import Flask, render_template, jsonify, request, url_for
 from collections import defaultdict
@@ -7,18 +6,20 @@ from datetime import datetime
 from typing import DefaultDict, List, Dict, Any
 import uuid
 from dotenv import load_dotenv
-
+from flask_cors import CORS
 
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 
 reviews_store: DefaultDict[str, List[Dict[str, Any]]] = defaultdict(list)
-backend_url = os.getenv("BACKEND_URL", "http://localhost:5000")
+backend_url = os.environ.get("BACKEND_URL", "http://localhost:3000")
 
 @app.route('/')
 def home():
     try:
+        print(f"{backend_url}/clothes")
         response = requests.get(f"{backend_url}/clothes")
         response.raise_for_status()
         items = response.json()
