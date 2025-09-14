@@ -26,7 +26,7 @@ def home():
     except Exception as e:
         print("Error fetching clothes:", e)
         items = []
-    return render_template("LandingPage.html", items=items)
+    return render_template("landingPage.html", items=items)
 
 
 @app.route('/item/<int:cloth_id>', methods=['GET'])
