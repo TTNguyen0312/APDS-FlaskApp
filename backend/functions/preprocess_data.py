@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from spellchecker import SpellChecker
 from nltk.stem import WordNetLemmatizer
+import nltk
 
 def clean_tokens(tokens):
     if not isinstance(tokens, list):
@@ -48,6 +49,11 @@ def preprocess_data(tokens: pd.Series, data_type="Title"):
     tokens = tokens.apply(remove_stopwords, stopset=stop_words)
 
     # --- Step 4: Lemmatization ---
+    try:
+        nltk.data.find("corpora/wordnet")
+    except LookupError:
+        nltk.download("wordnet")
+
     lemmatizer = WordNetLemmatizer()
     tokens = tokens.apply(lambda toks: [lemmatizer.lemmatize(w) for w in toks])
 
