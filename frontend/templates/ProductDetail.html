@@ -1,7 +1,7 @@
 {% extends "base.html" %} 
 {% block content %} 
 {% block head_extra %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/productDetail.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ProductDetail.css') }}" />
 {% endblock %}
 
 <main class="product-detail" data-cloth-id="{{ product.id }}">
@@ -153,6 +153,6 @@
   </section>
 </main>
 
-<script src="{{ url_for('static', filename='js/productDetail.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ProductDetail.js') }}"></script>
 
 {% endblock %}
