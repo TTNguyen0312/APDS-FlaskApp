@@ -4,9 +4,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from spellchecker import SpellChecker
-from nltk.stem import WordNetLemmatizer
-import nltk
-nltk.download('wordnet')
 
 
 def clean_tokens(tokens):
@@ -36,25 +33,21 @@ def clean_vocab_token(token):
 
 
 def preprocess_data(tokens: pd.Series, data_type="Title"):
-    # --- Step 1: Clean tokens ---
+    #  Step 1: Clean tokens
     tokens = tokens.apply(clean_tokens)
     print(tokens)
 
-    # --- Step 2: Spell correction (optional, heavy) ---
+    # Step 2: Spell correction (optional, heavy)
     tokens = tokens.apply(correct_tokens)
 
-    # --- Step 3: Remove stopwords ---
+    # Step 3: Remove stopwords
     stop_path = Path("data/stopwords_en.txt")
     with open(stop_path, "r", encoding="utf-8") as f:
         stop_words = {line.strip() for line in f if line.strip()}
 
     tokens = tokens.apply(remove_stopwords, stopset=stop_words)
 
-    # --- Step 4: Lemmatization ---
-    lemmatizer = WordNetLemmatizer()
-    tokens = tokens.apply(lambda toks: [lemmatizer.lemmatize(w) for w in toks])
-
-    # --- Step 5: Final cleanup ---
+    # Step 4: Final cleanup
     tokens = tokens.apply(
         lambda toks: [clean_vocab_token(t) for t in toks if clean_vocab_token(t)]
     )
