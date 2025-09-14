@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}APDS-ASM3{% endblock %}
+
+{% block content %}
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
+
+{% endblock %}
+
+<ul id="clothes-section" aria-label="Products">
+  {% for item in items %}
+  <li class="product-item">
+    <a href="{{ url_for('item_detail', cloth_id=item.ClothingID) }}">
+      <figure>
+        <div
+          aria-label="{{ item.ClothTitle }} image"
+          role="img"
+          style="background-image: url('{{ item.image_url or url_for('static', filename='img/he.jpg') }}'); width:360px; height:360px; background-size:cover; background-position:center;">
+        </div>
+        <figcaption>
+          <h3>{{ item.ClothTitle|upper or 'PRODUCT TITLE' }}</h3>
+          <p>{{ item.ClothDescription or 'No description available.' }}</p>
+          <p><strong>{{ item.Department or 'Department' }}</strong> – {{ item.DivisionName or 'Division' }}</p>
+        </figcaption>
+      </figure>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+
+<nav aria-label="Pagination" class="pagination">
+  <ol id="pagination-controls"></ol>
+</nav>
+
+<script src="{{ url_for('static', filename='js/landingPage.js') }}"></script>
+{% endblock %}

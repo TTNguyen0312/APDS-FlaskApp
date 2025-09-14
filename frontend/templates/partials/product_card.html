@@ -1,0 +1,17 @@
+<li>
+  <a href="{{ url_for('product_detail', id=item.id) }}">
+    <figure>
+      <div
+        aria-label="{{ item.ClothTitle }} image"
+        role="img"
+        style="background-image: url('{{ item.image_url or url_for('static', filename='img/placeholder.png') }}'); width:360px; height:360px; background-size:cover; background-position:center;">
+      </div>
+      <figcaption>
+        <h3>{{ item.ClothTitle|upper or 'PRODUCT TITLE' }}</h3>
+        <p>{{ item.ClothDescription or 'Lorem ipsum is simply dummy text of the printing and typesetting industry' }}</p>
+        <p><strong>{{ item.Department or 'Department' }}</strong> – {{ item.DivisionName or 'Division' }}</p>
+        <p><strong>${{ '%.2f'|format(item.price or 30) }}</strong></p>
+      </figcaption>
+    </figure>
+  </a>
+</li>

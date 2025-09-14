@@ -1,0 +1,158 @@
+{% extends "base.html" %} 
+{% block content %} 
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ProductDetail.css') }}" />
+{% endblock %}
+
+<main class="product-detail" data-cloth-id="{{ product.id }}">
+  <section class="product-detail__grid">
+    <!-- LEFT: Gallery -->
+    <div class="product-detail__gallery">
+      <div class="product-detail__image-main">
+        <div
+          role="img"
+          aria-label="{{ product.ClothTitle }}"
+          style="background-image: url('{{ product.main_image or url_for('static', filename='img/he.jpg') }}'); width:700px; height:550px; background-size:cover; background-position:center;">
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Info -->
+    <div class="product-detail__info">
+      <h2 class="product-detail__title">{{ product.ClothTitle|upper }}</h2>
+      <p class="product-detail__description">{{ product.ClothDescription }}</p>
+
+      <div class="product-detail__meta">
+        {% if product.ClassName %}
+          <p><strong>Class:</strong> {{ product.ClassName }}</p>
+        {% endif %}
+        {% if product.Department %}
+          <p><strong>Department:</strong> {{ product.Department }}</p>
+        {% endif %}
+        {% if product.DivisionName %}
+          <p><strong>Division:</strong> {{ product.DivisionName }}</p>
+        {% endif %}
+      </div>
+
+      <div class="product-detail__price">
+        <span class="product-detail__price-label">Price</span>
+        <span class="product-detail__price-value">
+          {{ "{:,.0f}".format(product.price|default(0)) }} VND
+        </span>
+      </div>
+
+      <div class="product-detail__actions">
+        <button class="product-detail__btn product-detail__btn--outline">
+          Add to cart
+        </button>
+        <button class="product-detail__btn product-detail__btn--solid">
+          Buy now
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <hr class="product-detail__divider" />
+
+  <section class="product-detail__section">
+    <h3 class="product-detail__section-title">PRODUCT DETAIL</h3>
+    <p class="product-detail__section-text">{{ product.ClothDescription }}</p>
+  </section>
+
+  <!-- PRODUCT FEEDBACK -->
+  <section class="product-reviews" id="reviews">
+    <h3 class="product-reviews__title">PRODUCT FEEDBACK</h3>
+    <form id="reviewForm" class="product-reviews__form" action="javascript:void(0);">
+      <div class="product-reviews__form-fields">
+        <div class="product-reviews__input-wrap">
+          <!-- ClothID -->
+          <input type="hidden" name="ClothingID" value="{{ product.id }}" />
+          <!-- Title -->
+          <input
+            id="reviewTitle"
+            name="ReviewTitle"
+            class="product-reviews__input"
+            type="text"
+            placeholder="Short title..."
+            maxlength="120"
+            required
+          />
+
+          <!-- Description -->
+          <label for="reviewText"><strong>Description:</strong></label>
+          <input
+            id="reviewText"
+            name="ReviewText"
+            class="product-reviews__textarea"
+            rows="3"
+            placeholder="Write a short review..."
+            required
+          />
+
+          <!-- Age -->
+          <label for="age"><strong>Age:</strong></label>
+          <input
+            id="age"
+            name="Age"
+            class="product-reviews__input"
+            type="number"
+            min="10"
+            max="100"
+            required
+          />
+
+          <!-- Rating -->
+          <label for="rating"><strong>Rating:</strong></label>
+          <select id="rating" name="Rating" class="product-reviews__input" required>
+            <option value="" disabled selected>Select rating</option>
+            <option value="1">⭐ 1</option>
+            <option value="2">⭐ 2</option>
+            <option value="3">⭐ 3</option>
+            <option value="4">⭐ 4</option>
+            <option value="5">⭐ 5</option>
+          </select>
+          <button class="product-reviews__send" type="submit" aria-label="Send comment">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+
+        <p id="reviewError" class="product-reviews__error" role="alert" hidden></p>
+      </div>
+    </form>
+
+    <div id="reviewsList" class="product-reviews__list" aria-live="polite">
+      {% if product.reviews and product.reviews|length > 0 %}
+        {% for review in product.reviews %}
+          <div class="product-reviews__item">
+            <div class="product-reviews__item-header">
+              <h4 class="product-reviews__item-title">{{ review.ReviewTitle }}</h4>
+              <p><strong>Description:</strong> {{ review.ReviewText }}</p>
+              <p><strong>Rating:</strong> ⭐ {{ review.Rating }}/5</p>
+              <p>
+                <strong>Recommended:</strong>
+                {% if review.Recommended == 1 %}
+                  ✅ Yes
+                {% else %}
+                  ❌ No
+                {% endif %}
+              </p>
+            </div>
+            <p><strong>Age:</strong> {{ review.Age }}</p>
+            <p><strong>Positive Votes:</strong> {{ review.PositiveFeedbackCount }}</p>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="product-reviews__empty">No reviews yet. Be the first to leave one!</p>
+      {% endif %}
+    </div>
+
+    <!-- Pagination controls -->
+    <nav aria-label="Pagination" class="pagination">
+      <ol id="reviews-pagination"></ol>
+    </nav>
+  </section>
+</main>
+
+<script src="{{ url_for('static', filename='js/ProductDetail.js') }}"></script>
+
+{% endblock %}

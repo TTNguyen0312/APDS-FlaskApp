@@ -24,8 +24,7 @@ a { color: inherit; text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 /* Serif look for the brand lockup */
-header h1,
-footer h2 {
+header h1 {
   margin: 0;
   font: 600 28px/1.2 Georgia, "Times New Roman", serif;
   letter-spacing: 0.06em;
@@ -53,9 +52,23 @@ header [role="banner"] {
   align-items: center;
   justify-content: center;
 }
+header a h1, footer h2 {
+  font-weight: 500;
+  font-family: 'Marcellus SC', serif;
+}
 
-/* Search icon (Font Awesome) on the right */
-header [role="banner"] a:last-of-type {
+footer h2 {
+  letter-spacing: 2px;
+}
+header a:hover {
+  text-decoration: none;
+}
+
+.icon-btn {
+  cursor: pointer;
+  font-size: larger;
+  background: none;
+  border: none;
   position: absolute;
   margin: 0 0 0 80%;
   top: 50%;
@@ -63,6 +76,82 @@ header [role="banner"] a:last-of-type {
   font-size: 18px; /* icon size */
   line-height: 1;
 }
+
+/* thanh tìm kiếm ẩn/hiện */
+.search { 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 70vw;
+  height: 70vh;
+  display: none; 
+  gap: .5rem; 
+  position: absolute; 
+  top: 70px;
+  padding: .5rem; 
+  background: #fff; 
+  border: 1px solid #ddd; 
+  border-radius: .5rem;
+}
+.search.open { 
+  display: flex; 
+}
+.search-input {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  top: 50px;
+}
+.search-input input {
+  width: 100%;
+  border: none;
+  border-bottom: 3px solid #333;
+  background: transparent;
+  padding: .25rem 0 .5rem;
+  outline: none;
+
+  font-size: clamp(22px, 3vw, 40px); 
+  font-weight: 600;
+  letter-spacing: .08em;
+  color: #222;
+}
+
+.search-input button{
+  height: 50px;
+  align-self: stretch;         
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  margin: 1.4rem 0 .2rem;
+  font-size: clamp(18px, 2.2vw, 24px);
+  color:#333;
+  transition: 0.15s;
+}
+
+.search-input button:hover {
+  background: #ddd;
+}
+
+.search-input button:focus{
+  outline: 2px solid #999;
+  outline-offset: 2px;
+}
+
+#searchClose {
+  font-size: 1.5rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  display: block;
+  position: absolute;
+  z-index: 1;
+  top: 1.375rem;
+  right: 1.875rem;
+}
+.search input { 
+  min-width: 260px; 
+}
+
 
 /* Primary nav row */
 header nav {
