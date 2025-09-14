@@ -193,4 +193,5 @@ def add_review():
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=3000, debug=True)
+    port = int(os.environ.get("PORT", 3000))  # default to 3000 locally
+    app.run(host='127.0.0.1', port=port, debug=True)
